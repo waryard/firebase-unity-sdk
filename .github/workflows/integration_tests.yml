@@ -179,6 +179,7 @@ jobs:
             --u ${{ matrix.unity_version }} \
             --p ${{ needs.check_and_prepare.outputs.platform }} \
             --ios_sdk ${{ needs.check_and_prepare.outputs.mobile_test_on }} \
+            --xcode_project \
             --plugin_dir ~/Downloads/firebase_unity_sdk \
             --output_directory "${{ github.workspace }}" \
             --artifact_name "${{ matrix.unity_version }}-all" \
@@ -202,12 +203,12 @@ jobs:
           name: testapps-${{ matrix.unity_version }}-Android
           path: testapps-${{ matrix.unity_version }}-all/Android
           retention-days: ${{ env.artifactRetentionDays }}
-      - name: Upload iOS integration tests artifact
+      - name: Upload iOS XCode project artifact
         uses: actions/upload-artifact@v2.2.2
         if: contains(needs.check_and_prepare.outputs.platform, 'iOS') && ${{ !cancelled() }}
         with:
-          name: testapps-${{ matrix.unity_version }}-iOS
-          path: testapps-${{ matrix.unity_version }}-all/iOS
+          name: testapps-${{ matrix.unity_version }}-xcode
+          path: testapps-${{ matrix.unity_version }}-all/xcode
           retention-days: ${{ env.artifactRetentionDays }}
       - name: Upload Linux integration tests artifact
         uses: actions/upload-artifact@v2.2.2
