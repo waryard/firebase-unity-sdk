@@ -333,7 +333,7 @@ jobs:
           - platform: "Android"
             mobile_test_on: "real"
           - platform: "iOS"
-            mobile_test_on: "virtual"
+            mobile_test_on: "real"
     steps:
       - uses: actions/checkout@v2
         with:
