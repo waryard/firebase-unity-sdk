@@ -70,7 +70,8 @@ namespace Firebase.Firestore {
     /// <param name="options">The transaction options to use.</param>.
     /// <param name="callback">The callback to run.</param>.
     /// <returns>A task that completes when the transaction has completed.</returns>
-    internal Task<T> RunTransactionAsync<T>(TransactionOptions options, Func<Transaction, Task<T>> callback) {
+    internal Task<T> RunTransactionAsync<T>(TransactionOptions options,
+        Func<Transaction, Task<T>> callback) {
       // Store the result of the most recent invocation of the user-supplied callback.
       bool callbackWrapperInvoked = false;
       Task<T> lastCallbackTask = null;
@@ -119,7 +120,8 @@ namespace Firebase.Firestore {
         }
       };
 
-      return _transactionManagerProxy.RunTransactionAsync(callbackId, options.Proxy, ExecuteCallback).ContinueWith<T>(overallCallback);
+      return _transactionManagerProxy.RunTransactionAsync(callbackId, options.Proxy, ExecuteCallback)
+          .ContinueWith<T>(overallCallback);
     }
 
     internal delegate bool TransactionCallbackDelegate(System.IntPtr transactionCallbackProxyPtr);

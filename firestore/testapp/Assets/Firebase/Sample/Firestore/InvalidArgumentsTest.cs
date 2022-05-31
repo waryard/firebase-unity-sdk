@@ -718,13 +718,17 @@ namespace Firebase.Sample.Firestore {
     private static void FirebaseFirestore_RunTransactionAsync_WithoutTypeParameter_WithOptions_NullOptions(
         UIHandlerAutomated handler) {
       DocumentReference doc = handler.TestDocument();
-      handler.AssertException(typeof(ArgumentNullException), () => handler.db.RunTransactionAsync(null, tx => tx.GetSnapshotAsync(doc)));
+      handler.AssertException(typeof(ArgumentNullException),
+          () => handler.db.RunTransactionAsync(null, tx => tx.GetSnapshotAsync(doc)));
     }
 
     private static void FirebaseFirestore_RunTransactionAsync_WithTypeParameter_WithOptions_NullOptions(
         UIHandlerAutomated handler) {
       DocumentReference doc = handler.TestDocument();
-      handler.AssertException(typeof(ArgumentNullException), () => handler.db.RunTransactionAsync<object>(null, tx => tx.GetSnapshotAsync(doc).ContinueWith(snapshot => new object())));
+      handler.AssertException(typeof(ArgumentNullException),
+          () => handler.db.RunTransactionAsync<object>(null, tx => tx.GetSnapshotAsync(doc)
+              .ContinueWith(snapshot => new object()))
+      );
     }
 
     private static void FirebaseFirestoreSettings_Host_Null(UIHandlerAutomated handler) {

@@ -19,7 +19,7 @@ using System.Threading;
 namespace Firebase.Firestore {
 
 /// <summary>
-/// Options to customize transaction behavior for 
+/// Options to customize transaction behavior for
 /// <see cref="FirebaseFirestore.RunTransactionAsync"/>.
 /// </summary>
 public sealed class TransactionOptions {
