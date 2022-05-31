@@ -14,7 +14,6 @@
 
 using System;
 using System.Threading;
-//using Firebase.Firestore.Internal;
 
 namespace Firebase.Firestore {
 
@@ -32,7 +31,12 @@ public sealed class TransactionOptions {
 
   internal TransactionOptionsProxy Proxy {
     get {
-      return new TransactionOptionsProxy(_proxy);
+      _lock.AcquireReaderLock(Int32.MaxValue);
+      try {
+        return new TransactionOptionsProxy(_proxy);
+      } finally {
+        _lock.ReleaseReaderLock();
+      }
     }
   }
 
@@ -52,10 +56,20 @@ public sealed class TransactionOptions {
   /// </remarks>
   public Int32 MaxAttempts {
     get {
-      return _proxy.max_attempts();
+      _lock.AcquireReaderLock(Int32.MaxValue);
+      try {
+        return _proxy.max_attempts();
+      } finally {
+        _lock.ReleaseReaderLock();
+      }
     }
     set {
-      _proxy.set_max_attempts(value);
+      _lock.AcquireWriterLock(Int32.MaxValue);
+      try {
+        _proxy.set_max_attempts(value);
+      } finally {
+        _lock.ReleaseWriterLock();
+      }
     }
   }
 
