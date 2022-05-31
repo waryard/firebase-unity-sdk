@@ -160,6 +160,9 @@ Release Notes
     - General: Added a missing namespace to the Google.MiniJson.dll.
     - Functions: Add a new method `GetHttpsCallableFromURL`, to create callables
       with URLs other than cloudfunctions.net.
+    - Firestore: Added `TransactionOptions` to control how many times a
+      transaction will retry commits before failing
+      ([#318](https://github.com/firebase/firebase-unity-sdk/pull/318)).
 
 ### 9.0.0
 - Changes
