@@ -95,9 +95,9 @@ FLAG_APPLE_DEVELOPER_TEAM_ID = flags.DEFINE_string(
 )
 
 FLAG_SYMLINK_CS_FILES = flags.DEFINE_boolean(
-  name="symlink",
+  name="hardlink",
   default=False,
-  help="Instead of copying the .cs source files, symlink them. This may be "
+  help="Instead of copying the .cs source files, hardlink them. This may be "
     "useful when modifying the files intended to be committed into source "
     "control."
 )
@@ -126,7 +126,7 @@ def main(argv: Sequence[str]) -> None:
     google_service_info_plist_file=flags.google_service_info_plist_file,
     android_package_name=flags.android_package_name,
     apple_developer_team_id=flags.apple_developer_team_id,
-    symlink_cs_files=flags.symlink_cs_files,
+    hardlink_cs_files=flags.hardlink_cs_files,
   )
 
   try:
@@ -151,7 +151,7 @@ class FlagsParser:
     self.google_service_info_plist_file: Optional[pathlib.Path] = None
     self.android_package_name: Optional[str] = None
     self.apple_developer_team_id: Optional[str] = None
-    self.symlink_cs_files: Optional[bool] = None
+    self.hardlink_cs_files: Optional[bool] = None
 
   @dataclasses.dataclass(frozen=True)
   class ParsedFlags:
@@ -162,7 +162,7 @@ class FlagsParser:
     google_service_info_plist_file: Optional[pathlib.Path]
     android_package_name: Optional[str]
     apple_developer_team_id: Optional[str]
-    symlink_cs_files: bool
+    hardlink_cs_files: bool
 
   def parse(self) -> ParsedFlags:
     self._load_defaults_file()
@@ -178,7 +178,7 @@ class FlagsParser:
       google_service_info_plist_file = self.google_service_info_plist_file,
       android_package_name = self.android_package_name,
       apple_developer_team_id = self.apple_developer_team_id,
-      symlink_cs_files = self.symlink_cs_files,
+      hardlink_cs_files = self.hardlink_cs_files,
     )
 
   def _load_defaults_file(self) -> None:
@@ -231,7 +231,7 @@ class FlagsParser:
       self.apple_developer_team_id = FLAG_APPLE_DEVELOPER_TEAM_ID.value
 
     self._log_using_flag_from_command_line(FLAG_SYMLINK_CS_FILES)
-    self.symlink_cs_files = FLAG_SYMLINK_CS_FILES.value
+    self.hardlink_cs_files = FLAG_SYMLINK_CS_FILES.value
 
   @classmethod
   def _log_using_flag_from_command_line(cls, flag: flags.Flag) -> None:
@@ -293,7 +293,7 @@ class UnityTestappCopier:
     google_service_info_plist_file: Optional[pathlib.Path],
     android_package_name: Optional[str],
     apple_developer_team_id: Optional[str],
-    symlink_cs_files: bool,
+    hardlink_cs_files: bool,
   ) -> None:
     self.git_repo_dir = git_repo_dir
     self.dest_dir_2017 = dest_dir_2017
@@ -302,7 +302,7 @@ class UnityTestappCopier:
     self.google_service_info_plist_file = google_service_info_plist_file
     self.android_package_name = android_package_name
     self.apple_developer_team_id = apple_developer_team_id
-    self.symlink_cs_files = symlink_cs_files
+    self.hardlink_cs_files = hardlink_cs_files
 
   def run(self) -> None:
     something_done = False
@@ -366,13 +366,13 @@ class UnityTestappCopier:
       project_settings_file = dest_dir / "ProjectSettings" / "ProjectSettings.asset"
       self._update_unity_app_info(project_settings_file, android_package_name, bundle_id)
 
-  # A drop-in replacement for `shutil.copy()` that creates symlinks for some files
-  # if symlink_cs_files=True was specified to __init__().
+  # A drop-in replacement for `shutil.copy()` that creates hard links for some files
+  # if hardlink_cs_files=True was specified to __init__().
   def _copy(self, src, dst, *, follow_symlinks=True):
-    if self.symlink_cs_files and str(src).endswith(".cs"):
+    if self.hardlink_cs_files and str(src).endswith(".cs"):
       src_file = pathlib.Path(src)
       dst_file = pathlib.Path(dst)
-      dst_file.symlink_to(src_file)
+      src_file.link_to(dst_file)
     else:
       shutil.copy(src, dst, follow_symlinks=follow_symlinks)
 
