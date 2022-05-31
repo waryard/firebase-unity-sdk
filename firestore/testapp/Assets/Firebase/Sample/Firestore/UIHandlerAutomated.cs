@@ -96,7 +96,6 @@ namespace Firebase.Sample.Firestore {
         TestUpdateFieldPath,
         TestWriteBatches,
         TestTransaction,
-        TestTransactionOptions,
         TestTransactionWithNonGenericTask,
         TestTransactionAbort,
         TestTransactionTaskFailures,
@@ -106,6 +105,8 @@ namespace Firebase.Sample.Firestore {
         TestTransactionsInParallel,
         // Waiting for all retries is slow, so we usually leave this test disabled.
         // TestTransactionMaxRetryFailure,
+        TestTransactionOptions,
+        TestTransactionWithExplicitMaxAttempts,
         TestSetOptions,
         TestCanTraverseCollectionsAndDocuments,
         TestCanTraverseCollectionAndDocumentParents,
@@ -157,8 +158,6 @@ namespace Firebase.Sample.Firestore {
       // For local development convenience, populate `testFilter` with the tests that you would like
       // to run (instead of running the entire suite).
       Func<Task>[] testFilter = {
-        TestTransactionOptions,
-        TestInvalidArgumentAssertions,
         // THIS LIST MUST BE EMPTY WHEN CHECKED INTO SOURCE CONTROL!
       };
 
@@ -1473,6 +1472,28 @@ namespace Firebase.Sample.Firestore {
         foreach (FirebaseApp app in apps) {
           app.Dispose();
         }
+      });
+    }
+
+    Task TestTransactionWithExplicitMaxAttempts() {
+      return Async(() => {
+        var options = new TransactionOptions();
+        options.MaxAttempts = 3;
+        int numAttempts = 0;
+        DocumentReference doc = TestDocument();
+
+        Task txnTask = db.RunTransactionAsync(options, transaction => {
+          numAttempts++;
+          return transaction.GetSnapshotAsync(doc).ContinueWith(snapshot => {
+            // Queue a write via the transaction.
+            transaction.Set(doc, TestData(0));
+            // But also write the document (out-of-band) so the transaction is retried.
+            return doc.SetAsync(TestData(numAttempts));
+          }).Unwrap();
+        });
+
+        AssertTaskFaults(txnTask, FirestoreError.FailedPrecondition);
+        AssertEq(numAttempts, 3);
       });
     }
 

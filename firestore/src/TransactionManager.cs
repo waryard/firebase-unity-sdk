@@ -119,8 +119,7 @@ namespace Firebase.Firestore {
         }
       };
 
-      return _transactionManagerProxy.RunTransactionAsync(callbackId, ExecuteCallback)
-          .ContinueWith<T>(overallCallback);
+      return _transactionManagerProxy.RunTransactionAsync(callbackId, options.Proxy, ExecuteCallback).ContinueWith<T>(overallCallback);
     }
 
     internal delegate bool TransactionCallbackDelegate(System.IntPtr transactionCallbackProxyPtr);

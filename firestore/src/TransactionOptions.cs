@@ -30,6 +30,12 @@ public sealed class TransactionOptions {
   // The underlying C++ TransactionOptions object.
   private TransactionOptionsProxy _proxy = new TransactionOptionsProxy();
 
+  internal TransactionOptionsProxy Proxy {
+    get {
+      return new TransactionOptionsProxy(_proxy);
+    }
+  }
+
   /// <summary>
   /// Creates the default <c>TransactionOptions</c>.
   /// </summary>
