@@ -96,6 +96,7 @@ namespace Firebase.Sample.Firestore {
         TestUpdateFieldPath,
         TestWriteBatches,
         TestTransaction,
+        TestTransactionOptions,
         TestTransactionWithNonGenericTask,
         TestTransactionAbort,
         TestTransactionTaskFailures,
@@ -156,6 +157,8 @@ namespace Firebase.Sample.Firestore {
       // For local development convenience, populate `testFilter` with the tests that you would like
       // to run (instead of running the entire suite).
       Func<Task>[] testFilter = {
+        TestTransactionOptions,
+        TestInvalidArgumentAssertions,
         // THIS LIST MUST BE EMPTY WHEN CHECKED INTO SOURCE CONTROL!
       };
 
@@ -1096,6 +1099,43 @@ namespace Firebase.Sample.Firestore {
       });
     }
 
+    Task TestTransactionOptions() {
+      return Async(() => {
+        // Verify the initial values of a newly-created TransactionOptions object.
+        {
+          var options = new TransactionOptions();
+          AssertEq(options.MaxAttempts, 5);
+        }
+
+        // Verify that setting TransactionOptions.MaxAttempts works.
+        {
+          var options = new TransactionOptions();
+          options.MaxAttempts = 1;
+          AssertEq(options.MaxAttempts, 1);
+          options.MaxAttempts = 42;
+          AssertEq(options.MaxAttempts, 42);
+          options.MaxAttempts = Int32.MaxValue;
+          AssertEq(options.MaxAttempts, Int32.MaxValue);
+        }
+
+        // Verify that setting TransactionOptions.MaxAttempts throws on invalid value.
+        {
+          var options = new TransactionOptions();
+          AssertException(typeof(ArgumentException), () => { options.MaxAttempts = 0; });
+          AssertException(typeof(ArgumentException), () => { options.MaxAttempts = -1; });
+          AssertException(typeof(ArgumentException), () => { options.MaxAttempts = -42; });
+          AssertException(typeof(ArgumentException), () => { options.MaxAttempts = Int32.MinValue; });
+        }
+
+        // Verify that TransactionOptions.ToString() returns the right value.
+        {
+          var options = new TransactionOptions();
+          options.MaxAttempts = 42;
+          AssertEq(options.ToString(), "TransactionOptions{MaxAttempts=42}");
+        }
+      });
+    }
+
     // Tests the overload of RunTransactionAsync() where the update function returns a non-generic
     // Task object.
     Task TestTransactionWithNonGenericTask() {
@@ -1708,9 +1748,9 @@ namespace Firebase.Sample.Firestore {
 
     /*
     Anonymous authentication must be enabled for TestAuthIntegration to pass.
-    
+
     Also, the following security rules are required for TestAuthIntegrationt to pass:
-    
+
     rules_version='2'
     service cloud.firestore {
       match /databases/{database}/documents {
