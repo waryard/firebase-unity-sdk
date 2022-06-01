@@ -14,9 +14,8 @@ on:
         required: false
       create_new_branch:
         description: 'Check if we need to create new branch to package guids update. If working_branch set, will ignore this value. '
-        default: false
+        default: "0"
         required: true
-        type: boolean
       working_branch:
         description: 'If already a working in progress release branch'
         required: false
