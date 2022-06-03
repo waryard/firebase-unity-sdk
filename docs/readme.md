@@ -160,6 +160,8 @@ Release Notes
     - General: Added a missing namespace to the Google.MiniJson.dll.
     - Functions: Add a new method `GetHttpsCallableFromURL`, to create callables
       with URLs other than cloudfunctions.net.
+    - Analytics (iOS): Added InitiateOnDeviceConversionMeasurementWithEmail function to facilitate the
+      [on-device conversion measurement](https://support.google.com/google-ads/answer/12119136) API.
     - Firestore: Added `TransactionOptions` to control how many times a
       transaction will retry commits before failing
       ([#318](https://github.com/firebase/firebase-unity-sdk/pull/318)).

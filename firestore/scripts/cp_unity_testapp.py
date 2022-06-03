@@ -94,12 +94,13 @@ FLAG_APPLE_DEVELOPER_TEAM_ID = flags.DEFINE_string(
     "will need to be manually set in Xcode.",
 )
 
-FLAG_SYMLINK_CS_FILES = flags.DEFINE_boolean(
+FLAG_HARDLINK_CS_FILES = flags.DEFINE_boolean(
   name="hardlink",
   default=False,
-  help="Instead of copying the .cs source files, hardlink them. This may be "
-    "useful when modifying the files intended to be committed into source "
-    "control."
+  help="Instead of copying the .cs source files, hardlink them. This can be "
+    "useful when developing the C# code for the testapp itself, as changes "
+    "to those files will be instantly reflected both in the destination "
+    "Unity project and the GitHub repository."
 )
 
 
@@ -151,7 +152,6 @@ class FlagsParser:
     self.google_service_info_plist_file: Optional[pathlib.Path] = None
     self.android_package_name: Optional[str] = None
     self.apple_developer_team_id: Optional[str] = None
-    self.hardlink_cs_files: Optional[bool] = None
 
   @dataclasses.dataclass(frozen=True)
   class ParsedFlags:
@@ -178,7 +178,7 @@ class FlagsParser:
       google_service_info_plist_file = self.google_service_info_plist_file,
       android_package_name = self.android_package_name,
       apple_developer_team_id = self.apple_developer_team_id,
-      hardlink_cs_files = self.hardlink_cs_files,
+      hardlink_cs_files = FLAG_HARDLINK_CS_FILES.value,
     )
 
   def _load_defaults_file(self) -> None:
@@ -216,7 +216,7 @@ class FlagsParser:
       self.dest_dir_2017 = pathlib.Path(FLAG_DEST_DIR_2017.value)
     if FLAG_DEST_DIR_2020.value:
       self._log_using_flag_from_command_line(FLAG_DEST_DIR_2020)
-      self.dest_dir_2020 = pathlib.Path(FLAG_DEST_DIR_2017.value)
+      self.dest_dir_2020 = pathlib.Path(FLAG_DEST_DIR_2020.value)
     if FLAG_GOOGLE_SERVICES_JSON_FILE.value:
       self._log_using_flag_from_command_line(FLAG_GOOGLE_SERVICES_JSON_FILE)
       self.google_services_json_file = pathlib.Path(FLAG_GOOGLE_SERVICES_JSON_FILE.value)
@@ -230,8 +230,7 @@ class FlagsParser:
       self._log_using_flag_from_command_line(FLAG_APPLE_DEVELOPER_TEAM_ID)
       self.apple_developer_team_id = FLAG_APPLE_DEVELOPER_TEAM_ID.value
 
-    self._log_using_flag_from_command_line(FLAG_SYMLINK_CS_FILES)
-    self.hardlink_cs_files = FLAG_SYMLINK_CS_FILES.value
+    self._log_using_flag_from_command_line(FLAG_HARDLINK_CS_FILES)
 
   @classmethod
   def _log_using_flag_from_command_line(cls, flag: flags.Flag) -> None:
