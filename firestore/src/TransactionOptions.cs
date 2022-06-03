@@ -23,19 +23,19 @@ namespace Firebase.Firestore {
 /// </summary>
 public sealed class TransactionOptions {
 
-  // The lock that must be held during read and write operations to all instance variables.
-  private readonly ReaderWriterLock _lock = new ReaderWriterLock();
+  // The lock that must be held during all accesses to _proxy.
+  private readonly ReaderWriterLock _proxyLock = new ReaderWriterLock();
 
   // The underlying C++ TransactionOptions object.
   private TransactionOptionsProxy _proxy = new TransactionOptionsProxy();
 
   internal TransactionOptionsProxy Proxy {
     get {
-      _lock.AcquireReaderLock(Int32.MaxValue);
+      _proxyLock.AcquireReaderLock(Int32.MaxValue);
       try {
         return new TransactionOptionsProxy(_proxy);
       } finally {
-        _lock.ReleaseReaderLock();
+        _proxyLock.ReleaseReaderLock();
       }
     }
   }
@@ -56,19 +56,19 @@ public sealed class TransactionOptions {
   /// </remarks>
   public Int32 MaxAttempts {
     get {
-      _lock.AcquireReaderLock(Int32.MaxValue);
+      _proxyLock.AcquireReaderLock(Int32.MaxValue);
       try {
         return _proxy.max_attempts();
       } finally {
-        _lock.ReleaseReaderLock();
+        _proxyLock.ReleaseReaderLock();
       }
     }
     set {
-      _lock.AcquireWriterLock(Int32.MaxValue);
+      _proxyLock.AcquireWriterLock(Int32.MaxValue);
       try {
         _proxy.set_max_attempts(value);
       } finally {
-        _lock.ReleaseWriterLock();
+        _proxyLock.ReleaseWriterLock();
       }
     }
   }
