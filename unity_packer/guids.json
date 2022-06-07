@@ -4409,6 +4409,7 @@
         "Firebase/Editor/FirebaseMessaging_version-9.1.0_manifest.txt": "b09f09425a9046ea80ba72da6ecfda1d",
         "Firebase/Editor/FirebaseRemoteConfig_version-9.1.0_manifest.txt": "18d6dc21f6294c7b92122e07ee6afd45",
         "Firebase/Editor/FirebaseStorage_version-9.1.0_manifest.txt": "6c9031e8e694405b985446e30906fcac",
+        "Firebase/Plugins/x86_64/FirebaseCppApp-9_1_0.bundle": "a5ab20ffd53c4ab5ba7c141d7749f54b",
         "Firebase/Plugins/x86_64/FirebaseCppApp-9_1_0.dll": "aa80adbdfa304383897b84c5164ed893",
         "Firebase/Plugins/x86_64/FirebaseCppApp-9_1_0.so": "1df12a90f70f4bbe84ec6dd05f30e0c1",
         "Firebase/m2repository/com/google/firebase/firebase-analytics-unity/9.1.0/firebase-analytics-unity-9.1.0.pom": "9ec6ab29b7dc453db7287015df41c947",
