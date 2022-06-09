@@ -73,6 +73,9 @@ namespace Firebase.Editor {
             this.scriptGuid = scriptGuid;
             this.windowsScriptFilename = windowsScriptFilename;
             this.windowsScriptGuid = windowsScriptGuid;
+            Debug.Log("*************PythonExecutor new PythonExecutor *************scriptPath:" +scriptPath+
+            ", scriptFilename:"+scriptFilename+", scriptGuid:"+scriptGuid+", windowsScriptFilename:"+windowsScriptFilename+
+            ", windowsScriptGuid:"+windowsScriptGuid);
         }
 
         /// <summary>
@@ -122,6 +125,7 @@ namespace Firebase.Editor {
         private static string s_pythonInterpreter = null;
 
         private static void FindPythonInterpreter() {
+          Debug.Log("************* FindPythonInterpreter *************");
           // Run each entry in PYTHON_INTERPRETERS in sequence until we get one
           // that succeeds.
           foreach (string interpreter in PYTHON_INTERPRETERS) {
@@ -139,7 +143,7 @@ namespace Firebase.Editor {
           }
           // Fall back to the first option in case none worked, so this doesn't
           // keep retrying.
-          Debug.LogError(
+          Debug.LogWarning(
               "Could not find a working python interpreter. " +
               "Please make sure one of the following is in your PATH: " +
               String.Join(" ", PYTHON_INTERPRETERS));
