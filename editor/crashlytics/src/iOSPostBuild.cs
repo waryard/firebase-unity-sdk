@@ -24,7 +24,6 @@ namespace Firebase.Crashlytics.Editor {
   using System.IO;
   using System.Reflection;
   using System.Text;
-  using UnityEditor.iOS.Xcode;
 
   /// <summary>
   /// Container for reflection-based method calls to add a Run Script Build Phase for the generated
@@ -69,6 +68,7 @@ namespace Firebase.Crashlytics.Editor {
     [PostProcessBuild(100)]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string buildPath) {
       // BuiltTarget.iOS is not defined in Unity 4, so we just use strings here
+      Debug.Log("****************[Firebase] Crashlytics OnPostprocessBuild *********************");
       if (buildTarget.ToString() == "iOS" || buildTarget.ToString() == "iPhone") {
         string projectPath = Path.Combine(buildPath, "Unity-iPhone.xcodeproj/project.pbxproj");
         string plistPath = Path.Combine(buildPath, "Info.plist");
@@ -109,9 +109,10 @@ namespace Firebase.Crashlytics.Editor {
       pbxProject.WriteToFile(projectPath);
     }
 
-    private static void SetupGUIDForSymbolUploads(UnityEditor.iOS.Xcode.PBXProject pbxProject,
-                                                  string completeRunScriptBody, string targetGuid) {
-      try {
+       private static void SetupGUIDForSymbolUploads(object projectObj,
+                                                          string completeRunScriptBody, string targetGuid) {
+           var pbxProject = (UnityEditor.iOS.Xcode.PBXProject)projectObj;
+             try {
         // Use reflection to append a Crashlytics Run Script
         BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
         CallingConventions callingConventions = CallingConventions.Any;
@@ -152,8 +153,8 @@ namespace Firebase.Crashlytics.Editor {
       }
     }
 
-    private static string GetUnityFrameworkTargetGuid(UnityEditor.iOS.Xcode.PBXProject project) {
-      // var project = (UnityEditor.iOS.Xcode.PBXProject)projectObj;
+    private static string GetUnityFrameworkTargetGuid(object projectObj) {
+      var project = (UnityEditor.iOS.Xcode.PBXProject)projectObj;
       MethodInfo getUnityFrameworkTargetGuid =
           project.GetType().GetMethod("GetUnityFrameworkTargetGuid");
 
@@ -219,7 +220,7 @@ namespace Firebase.Crashlytics.Editor {
     private static void AddCrashlyticsDevelopmentPlatformToPlist(string plistPath) {
       string unityVersion = Application.unityVersion;
       Debug.Log(String.Format("Adding Unity Editor Version ({0}) to the Xcode project's Info.plist", unityVersion));
-      PlistDocument plist = new PlistDocument();
+      UnityEditor.iOS.Xcode.PlistDocument plist = new UnityEditor.iOS.Xcode.PlistDocument();
 
       plist.ReadFromFile(plistPath);
       plist.root.SetString(CRASHLYTICS_UNITY_VERSION_KEY, unityVersion);
