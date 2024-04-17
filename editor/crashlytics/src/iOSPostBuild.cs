@@ -24,7 +24,6 @@ namespace Firebase.Crashlytics.Editor {
   using System.IO;
   using System.Reflection;
   using System.Text;
-  using UnityEditor.iOS.Xcode;
 
   /// <summary>
   /// Container for reflection-based method calls to add a Run Script Build Phase for the generated
@@ -229,7 +228,7 @@ namespace Firebase.Crashlytics.Editor {
     private static void AddCrashlyticsDevelopmentPlatformToPlist(string plistPath) {
       string unityVersion = Application.unityVersion;
       Debug.Log(String.Format("Adding Unity Editor Version ({0}) to the Xcode project's Info.plist", unityVersion));
-      PlistDocument plist = new PlistDocument();
+      UnityEditor.iOS.Xcode.PlistDocument plist = new UnityEditor.iOS.Xcode.PlistDocument();
 
       plist.ReadFromFile(plistPath);
       plist.root.SetString(CRASHLYTICS_UNITY_VERSION_KEY, unityVersion);

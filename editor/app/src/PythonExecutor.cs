@@ -122,6 +122,7 @@ namespace Firebase.Editor {
         private static string s_pythonInterpreter = null;
 
         private static void FindPythonInterpreter() {
+          Debug.Log("************* FindPythonInterpreter *************");
           // Run each entry in PYTHON_INTERPRETERS in sequence until we get one
           // that succeeds.
           foreach (string interpreter in PYTHON_INTERPRETERS) {
@@ -140,7 +141,7 @@ namespace Firebase.Editor {
           // Only log an error for non-Windows platform, since Windows can use
           // an executable instead of the python interpreter.
           if (Application.platform != RuntimePlatform.WindowsEditor) {
-            Debug.LogError(
+            Debug.LogWarning(
                 "Could not find a working python interpreter. " +
                 "Please make sure one of the following is in your PATH: " +
                 String.Join(" ", PYTHON_INTERPRETERS));
